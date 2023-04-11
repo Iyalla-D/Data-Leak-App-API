@@ -67,16 +67,16 @@
             <artifactId>maven-dependency-plugin</artifactId>
         </plugin>
         <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-shade-plugin</artifactId>
-            <version>3.4.1</version>
-            <executions>
-                <execution>
-                    <phase>package</phase>
-                    <goals>
-                        <goal>shade</goal>
-                    </goals>
-                    <configuration>
+			<groupId>org.apache.maven.plugins</groupId>
+			<artifactId>maven-shade-plugin</artifactId>
+			<version>3.4.1</version>
+			<executions>
+				<execution>
+					<phase>package</phase>
+					<goals>
+						<goal>shade</goal>
+					</goals>
+					<configuration>
 						<createDependencyReducedPom>true</createDependencyReducedPom>
 						<transformers>
 							<transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
@@ -86,9 +86,9 @@
 							</transformer>
 						</transformers>
 					</configuration>
-                </execution>
-            </executions>
-        </plugin>
+				</execution>
+			</executions>
+		</plugin>
     </plugins>
 </build>
 
