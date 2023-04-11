@@ -1,6 +1,7 @@
 package com.example.springtest.other;
 
 import java.io.BufferedReader;
+import java.io.Console;
 import java.io.InputStreamReader;
 import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
@@ -8,8 +9,13 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -87,11 +93,9 @@ public class HaveIBeenPwnedController {
         }
     }
 
-    @GetMapping("/ispasswordpwned")
-    public static boolean isPasswordPwned(@RequestParam("password") String password) {
-        //PasswordEncryptor decrypter = new PasswordEncryptor();
-        //decrypter.decryptPassword(encryped);
-        //String password = "";
+    @PostMapping("/ispasswordpwned")
+    public static boolean isPasswordPwned(@RequestBody Map<String, String> sentRequest) {
+        String password = PasswordEncryptor.decryptObj(sentRequest);
         try {
             MessageDigest sha1 = MessageDigest.getInstance("SHA-1");
             byte[] hash = sha1.digest(password.getBytes(StandardCharsets.UTF_8));

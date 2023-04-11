@@ -49,12 +49,8 @@ public class PasswordEncryptor {
     }
 
     @PostMapping("/encrypt")
-    public String encryptPassword(@RequestBody Map<String, String> data) {
-        //String name = data.get("name");
-        //String url = data.get("url");
-        String email = data.get("email");
-        String password = data.get("password");
-        //String isLeaked = data.get("isLeaked");
+    public String encryptObj(@RequestBody Map<String, String> data) {
+        String Obj = data.get("Obj");
         String masterPassword = data.get("master");
         try {
             byte[] salt = generateSalt();
@@ -64,13 +60,7 @@ public class PasswordEncryptor {
             IvParameterSpec ivSpec = new IvParameterSpec(Arrays.copyOfRange(salt, 0, 16));
             cipher.init(Cipher.ENCRYPT_MODE, keySpec, ivSpec);
 
-            byte[] encryptedEmail= cipher.doFinal(email.getBytes("UTF-8"));
-            byte[] saltAndEncryptedEmail = new byte[SALT_LENGTH + encryptedEmail.length];
-            System.arraycopy(salt, 0, saltAndEncryptedEmail, 0, SALT_LENGTH);
-            System.arraycopy(encryptedEmail, 0, saltAndEncryptedEmail, SALT_LENGTH,
-            encryptedEmail.length);
-
-            byte[] encryptedPassword = cipher.doFinal(password.getBytes("UTF-8"));
+            byte[] encryptedPassword = cipher.doFinal(Obj.getBytes("UTF-8"));
             byte[] saltAndEncryptedPassword = new byte[SALT_LENGTH + encryptedPassword.length];
             System.arraycopy(salt, 0, saltAndEncryptedPassword, 0, SALT_LENGTH);
             System.arraycopy(encryptedPassword, 0, saltAndEncryptedPassword, SALT_LENGTH,
@@ -86,12 +76,12 @@ public class PasswordEncryptor {
     }
 
     @PostMapping("/decrypt")
-    public static String decryptPassword(@RequestBody Map<String, String> request) {
-        String encodedPassword = request.get("password");
-        String masterPassword = request.get("masterPassword");
+    public static String decryptObj(@RequestBody Map<String, String> request) {
+        String encodedObj = request.get("Obj");
+        String masterPassword = request.get("master");
         
         try {
-            byte[] saltAndEncryptedPassword = Base64.getDecoder().decode(encodedPassword);
+            byte[] saltAndEncryptedPassword = Base64.getDecoder().decode(encodedObj);
             byte[] salt = Arrays.copyOfRange(saltAndEncryptedPassword, 0, SALT_LENGTH);
             byte[] encryptedPassword = Arrays.copyOfRange(saltAndEncryptedPassword, SALT_LENGTH, saltAndEncryptedPassword.length);
 

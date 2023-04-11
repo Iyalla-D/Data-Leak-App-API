@@ -19,6 +19,6 @@ public class SpringtestApplication {
                     @RequestParam(value = "password") String password) {
     Breached user = new Breached();
     user.setName(name);
-    return password;
+    return name;
 	}
 }
