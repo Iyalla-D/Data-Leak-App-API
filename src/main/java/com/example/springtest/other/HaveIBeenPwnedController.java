@@ -89,9 +89,7 @@ public class HaveIBeenPwnedController {
         }
     }
 
-    @PostMapping("/ispasswordpwned")
-    public static boolean isPasswordPwned(@RequestBody Map<String, String> sentRequest) {
-        String password = PasswordEncryptor.decryptObj(sentRequest);
+    private static boolean checkPwnedPass(String password) {
         try {
             MessageDigest sha1 = MessageDigest.getInstance("SHA-1");
             byte[] hash = sha1.digest(password.getBytes(StandardCharsets.UTF_8));
@@ -109,7 +107,17 @@ public class HaveIBeenPwnedController {
             e.printStackTrace();
             return false;
         }
-       
+    }
+
+
+    @PostMapping("/ispasswordpwned")
+    public static boolean isPasswordPwned(@RequestBody Map<String, String> sentRequest) {
+        String password = PasswordEncryptor.decryptObj(sentRequest);
+        return checkPwnedPass(password);
+    }
+
+    public static boolean isPasswordPwnedSecondary(String password) {
+        return checkPwnedPass(password);
     }
 
     private static String bytesToHex(byte[] bytes) {

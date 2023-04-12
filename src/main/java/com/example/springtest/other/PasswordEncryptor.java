@@ -105,16 +105,18 @@ public class PasswordEncryptor {
     @GetMapping("/newPass")
     public static String generatePassword(@RequestParam(value = "length", defaultValue = "10") int length) {
         String characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#%^&*()_+-=[]{}|;':,.<>/?";
-
         SecureRandom random = new SecureRandom();
-        StringBuilder password = new StringBuilder();
+        StringBuilder password;
 
-        for (int i = 0; i < length; i++) {
-            password.append(characters.charAt(random.nextInt(characters.length())));
-        }
+        do {
+            password = new StringBuilder();
+            for (int i = 0; i < length; i++) {
+                password.append(characters.charAt(random.nextInt(characters.length())));
+            }
+        } while (HaveIBeenPwnedController.isPasswordPwnedSecondary(password.toString()));
 
         return password.toString();
-	}
+    }
 
 
 }
