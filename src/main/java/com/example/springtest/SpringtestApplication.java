@@ -11,14 +11,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 @SpringBootApplication
 @RestController
 public class SpringtestApplication {
-    public static void main(String[] args) {
-      SpringApplication.run(SpringtestApplication.class, args);
-    }
-    @GetMapping("/")
-	public String hello(@RequestParam(value = "name", defaultValue = "World") String name,
-                    @RequestParam(value = "password") String password) {
+  public static void main(String[] args) {
+    SpringApplication.run(SpringtestApplication.class, args);
+  }
+
+  @GetMapping("/")
+	public String Welcome(@RequestParam(value = "name", defaultValue = "User") String name) {
     Breached user = new Breached();
     user.setName(name);
-    return name;
+    return "Welcome, " + name;
 	}
 }
