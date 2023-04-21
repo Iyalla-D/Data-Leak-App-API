@@ -74,7 +74,8 @@ public class HaveIBeenPwnedController {
             HttpGet request = new HttpGet(url);
             request.addHeader("hibp-api-key", API_Key);
             CloseableHttpClient httpClient = HttpClients.createDefault();
-            CloseableHttpResponse response = httpClient.execute(request);            String responseBody = EntityUtils.toString(response.getEntity(), StandardCharsets.UTF_8);
+            CloseableHttpResponse response = httpClient.execute(request);            
+            String responseBody = EntityUtils.toString(response.getEntity(), StandardCharsets.UTF_8);
             String[] lines = responseBody.split("\\r?\\n");
             for (String line : lines) {
                 String[] parts = line.split(":");
