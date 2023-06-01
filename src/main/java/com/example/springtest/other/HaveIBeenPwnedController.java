@@ -28,7 +28,7 @@ import org.apache.http.util.EntityUtils;
 
 @RestController
 public class HaveIBeenPwnedController {
-    private static final String API_Key = "";
+    private static final String API_Key = "b7052a4b52b74dc1a1db1430cd4f8657";
     private static final String API_URL = "https://api.pwnedpasswords.com/range/";
     private static final Gson gson = new Gson();
 
@@ -51,7 +51,6 @@ public class HaveIBeenPwnedController {
         } else {
             throw new RuntimeException("API request failed with status code " + statusCode);
         }
-
     }
 
     public static boolean isEmailPwned(String email) {
@@ -64,11 +63,21 @@ public class HaveIBeenPwnedController {
         }
     }
 
-    public static int getCountOfPasswordPwned(String password) {
-    	try {
+    public static String getHashString(String password) {
+        try{
             MessageDigest sha1 = MessageDigest.getInstance("SHA-1");
             byte[] hash = sha1.digest(password.getBytes(StandardCharsets.UTF_8));
             String hashString = bytesToHex(hash);
+            return hashString;
+        }catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static String getPassData(String password) {
+        try{ 
+            String hashString = getHashString(password);
             String hashPrefix = hashString.substring(0, 5).toUpperCase();
             String url = API_URL + hashPrefix;
             HttpGet request = new HttpGet(url);
@@ -76,6 +85,18 @@ public class HaveIBeenPwnedController {
             CloseableHttpClient httpClient = HttpClients.createDefault();
             CloseableHttpResponse response = httpClient.execute(request);            
             String responseBody = EntityUtils.toString(response.getEntity(), StandardCharsets.UTF_8);
+            return responseBody;
+        }catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+        
+    }
+
+    public static int getCountOfPasswordPwned(String password) {
+    	try {
+            String hashString = getHashString(password);     
+            String responseBody = getPassData(password);
             String[] lines = responseBody.split("\\r?\\n");
             for (String line : lines) {
                 String[] parts = line.split(":");
@@ -92,17 +113,8 @@ public class HaveIBeenPwnedController {
 
     private static boolean checkPwnedPass(String password) {
         try {
-            MessageDigest sha1 = MessageDigest.getInstance("SHA-1");
-            byte[] hash = sha1.digest(password.getBytes(StandardCharsets.UTF_8));
-            String hashString = bytesToHex(hash);
-            String hashPrefix = hashString.substring(0, 5).toUpperCase();
-            String url = API_URL + hashPrefix;
-            HttpGet request = new HttpGet(url);
-            request.addHeader("hibp-api-key", API_Key);
-            CloseableHttpClient httpClient = HttpClients.createDefault();
-            CloseableHttpResponse response = httpClient.execute(request);
-            HttpEntity entity = response.getEntity();
-            String responseBody = EntityUtils.toString(entity);
+            String hashString = getHashString(password);     
+            String responseBody = getPassData(password);
             return responseBody.contains(hashString.substring(5).toUpperCase());
         }catch(Exception e){
             e.printStackTrace();
@@ -113,7 +125,8 @@ public class HaveIBeenPwnedController {
 
     @PostMapping("/ispasswordpwned")
     public static boolean isPasswordPwned(@RequestBody Map<String, String> sentRequest) {
-        String password = PasswordEncryptor.decryptObj(sentRequest);
+        ///String password = PasswordEncryptor.decryptObj(sentRequest);
+        String password = sentRequest.get("pass");
         return checkPwnedPass(password);
     }
 
