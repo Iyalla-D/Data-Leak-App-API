@@ -2,7 +2,6 @@ package com.example.springtest;
 
 import java.util.Queue;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.web.bind.annotation.RestController;
@@ -20,7 +19,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class SpringtestApplication {
   private final WebScrapingService webScrapingService;
 
-  @Autowired
   public SpringtestApplication(WebScrapingService webScrapingService) {
     this.webScrapingService = webScrapingService;
   }
